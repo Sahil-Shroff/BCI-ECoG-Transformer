@@ -1,0 +1,33 @@
+import torch
+
+from bci_ecog.models.raw_cnn import RawCNN1D
+from bci_ecog.models.spectrogram_cnn import SpectrogramCNN2D
+
+
+def test_raw_cnn_forward_shape():
+    model = RawCNN1D(
+        input_channels=64,
+        channels=[32, 64],
+        kernel_size=7,
+        dropout=0.2,
+        classifier_hidden_dim=32,
+        num_classes=2,
+    )
+    inputs = torch.randn(4, 64, 3000)
+    outputs = model(inputs)
+    assert outputs.shape == (4, 2)
+
+
+def test_spectrogram_cnn_forward_shape():
+    model = SpectrogramCNN2D(
+        input_channels=64,
+        channels=[32, 64],
+        kernel_size=3,
+        dropout=0.2,
+        classifier_hidden_dim=32,
+        num_classes=2,
+    )
+    inputs = torch.randn(4, 64, 65, 90)
+    outputs = model(inputs)
+    assert outputs.shape == (4, 2)
+
