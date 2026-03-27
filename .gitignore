@@ -10,5 +10,7 @@ build/
 dist/
 data/raw/
 data/processed/
-# outputs/
-
+outputs/**/__pycache__/
+outputs/**/*.pt
+outputs/**/*.pth
+outputs/**/*.ckpt
