@@ -21,13 +21,20 @@ def _load_mat_file(path: Path) -> dict[str, Any]:
 
 
 def _resolve_data_file(dataset_dir: Path, requested_name: str, fallbacks: tuple[str, ...]) -> Path:
-    candidates = [requested_name, *fallbacks]
+    candidates = list(dict.fromkeys([requested_name, *fallbacks]))
     for candidate in candidates:
         resolved = dataset_dir / candidate
         if resolved.exists():
             return resolved
+    available_files = sorted(path.name for path in dataset_dir.glob("*")) if dataset_dir.exists() else []
+    available_text = ", ".join(available_files) if available_files else "no files found"
     raise FileNotFoundError(
-        f"Could not find any of {candidates} in dataset directory '{dataset_dir}'."
+        "Could not find any of "
+        f"{candidates} in dataset directory '{dataset_dir}'. "
+        f"Directory contents: {available_text}. "
+        "Download the official files with "
+        f"`python -m src.download_data --data-dir {dataset_dir.as_posix()}` "
+        "or place `Competition_train.mat.gz` and `Competition_test.mat.gz` there manually."
     )
 
 
@@ -81,4 +88,3 @@ def load_dataset(dataset_dir: str | Path, train_file: str, competition_test_file
         payload["competition_test_labels"] = encode_labels(competition_labels_raw)
 
     return payload
-

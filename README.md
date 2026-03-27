@@ -37,7 +37,7 @@ data/raw/bci_competition_iii_dataset_i/
 Option 2: try the helper downloader:
 
 ```bash
-python -m bci_ecog.download_data --data-dir data/raw/bci_competition_iii_dataset_i
+python -m src.download_data --data-dir data/raw/bci_competition_iii_dataset_i
 ```
 
 If the host changes the direct download URLs, download from the official competition page and place the two files in the directory above.

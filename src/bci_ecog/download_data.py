@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import shutil
 import ssl
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -21,6 +22,12 @@ def download_file(url: str, destination: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     try:
         with urllib.request.urlopen(url) as response, destination.open("wb") as handle:
+            shutil.copyfileobj(response, handle)
+    except urllib.error.URLError as exc:
+        if not isinstance(exc.reason, ssl.SSLCertVerificationError):
+            raise
+        context = ssl._create_unverified_context()
+        with urllib.request.urlopen(url, context=context) as response, destination.open("wb") as handle:
             shutil.copyfileobj(response, handle)
     except ssl.SSLCertVerificationError:
         context = ssl._create_unverified_context()
