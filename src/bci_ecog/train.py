@@ -10,7 +10,12 @@ import torch
 from bci_ecog.config import load_config, save_config
 from bci_ecog.data.competition_iii import decode_labels, load_dataset
 from bci_ecog.data.datasets import build_dataloader
-from bci_ecog.data.preprocessing import apply_normalization, apply_windowing, build_preprocessing_pipeline
+from bci_ecog.data.preprocessing import (
+    apply_emd_augmentation,
+    apply_normalization,
+    apply_windowing,
+    build_preprocessing_pipeline,
+)
 from bci_ecog.data.splits import create_stratified_splits, summarize_splits
 from bci_ecog.models.factory import build_model
 from bci_ecog.training.checkpoints import CheckpointSaver
@@ -71,11 +76,20 @@ def run_training(config_path: str | Path) -> Path:
     )
 
     preprocessor = build_preprocessing_pipeline(config)
-    window_config = config.get("preprocessing", {}).get("windowing", {"enabled": False})
+    preprocessing_config = config.get("preprocessing", {})
+    window_config = preprocessing_config.get("windowing", {"enabled": False})
+    augmentation_config = preprocessing_config.get("augmentation", {"enabled": False})
 
-    train_features, train_labels = _prepare_split_features(
+    train_signals, train_targets = apply_emd_augmentation(
         signals=dataset["train_signals"][split_indices["train"]],
         labels=dataset["train_labels"][split_indices["train"]],
+        augmentation_config=augmentation_config,
+        seed=config["seed"],
+    )
+
+    train_features, train_labels = _prepare_split_features(
+        signals=train_signals,
+        labels=train_targets,
         preprocessor=preprocessor,
         window_config=window_config,
         fit_preprocessor=True,
