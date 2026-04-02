@@ -1,7 +1,6 @@
 import numpy as np
 
 from bci_ecog.data.preprocessing import (
-    _augment_trial_with_emd,
     _extract_imfs_1d,
     _interpolate_envelope,
     _mix_imfs_across_trials,
@@ -34,7 +33,7 @@ def test_emd_augmentation_increases_size_deterministically():
         "max_imfs": 4,
         "max_siftings": 6,
         "stopping_tolerance": 0.05,
-        "imf_jitter_std": 0.10,
+        "deviation_percent": 10.0,
         "keep_residue": True,
     }
 
@@ -58,31 +57,6 @@ def test_emd_augmentation_increases_size_deterministically():
     assert np.array_equal(augmented_labels_1[: labels.shape[0]], labels)
 
     assert np.array_equal(augmented_signals_1, augmented_signals_2)
-
-
-def test_synchronized_channel_scaling_preserves_spatial_structure():
-    """Verify that all channels use the same random scaling (preserves spatial covariance)."""
-    rng = np.random.default_rng(42)
-    # Create a multi-channel trial with distinct patterns per channel
-    num_channels = 8
-    num_samples = 100
-    trial_signals = rng.normal(size=(num_channels, num_samples)).astype(np.float32)
-    
-    # Extract and augment with synchronized scaling
-    augmented = _augment_trial_with_emd(
-        trial_signals=trial_signals,
-        rng=rng,
-        max_imfs=3,
-        max_siftings=5,
-        stopping_tolerance=0.05,
-        imf_jitter_std=0.10,
-        keep_residue=True,
-        extrema_distance=3,
-    )
-    
-    assert augmented.shape == trial_signals.shape
-    # Verify output is finite
-    assert np.all(np.isfinite(augmented))
 
 
 def test_extrema_distance_filters_noise():
@@ -156,6 +130,7 @@ def test_cross_trial_imf_mixing_by_class():
         max_imfs=4,
         rng=rng,
         keep_residue=True,
+        imf_jitter_std=0.05,
     )
     
     assert synthetic.shape == (num_synthetic, num_channels, num_samples)
@@ -174,7 +149,7 @@ def test_augmentation_preserves_class_balance():
         "max_imfs": 3,
         "max_siftings": 5,
         "stopping_tolerance": 0.05,
-        "imf_jitter_std": 0.10,
+        "deviation_percent": 15.0,
         "keep_residue": True,
         "extrema_distance": 3,
     }
