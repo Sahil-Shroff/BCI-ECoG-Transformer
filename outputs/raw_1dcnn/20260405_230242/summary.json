@@ -1,0 +1,42 @@
+{
+  "run_dir": "outputs/raw_1dcnn/20260405_230242",
+  "device": "cuda",
+  "dataset": {
+    "train_path": "data/raw/bci_competition_iii_dataset_i/Competition_train.mat.gz",
+    "competition_test_path": "data/raw/bci_competition_iii_dataset_i/Competition_test.mat.gz"
+  },
+  "input_shape": [
+    64,
+    3000
+  ],
+  "representation": "raw",
+  "best_epoch_metrics": {
+    "epoch": 5,
+    "train": {
+      "accuracy": 0.9166666666666666,
+      "balanced_accuracy": 0.9166666666666666,
+      "macro_f1": 0.9163703598350164,
+      "loss": 0.2307373248040676
+    },
+    "val": {
+      "accuracy": 0.9523809523809523,
+      "balanced_accuracy": 0.9523809523809523,
+      "macro_f1": 0.9523809523809523,
+      "loss": 0.2738226999839147
+    }
+  },
+  "final_metrics": {
+    "val": {
+      "accuracy": 0.9523809523809523,
+      "balanced_accuracy": 0.9523809523809523,
+      "macro_f1": 0.9523809523809523,
+      "loss": 0.2738226999839147
+    },
+    "test": {
+      "accuracy": 0.8095238095238095,
+      "balanced_accuracy": 0.8095238095238095,
+      "macro_f1": 0.8077803203661327,
+      "loss": 0.4634945789972941
+    }
+  }
+}
