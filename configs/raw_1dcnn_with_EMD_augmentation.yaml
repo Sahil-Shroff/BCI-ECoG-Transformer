@@ -1,5 +1,5 @@
 experiment:
-    name: Raw_CNN_1D_Baseline
+    name: Raw_CNN_1D_Baseline_EMD_Augmentation
     output_root: outputs
 
 seed: 42
@@ -25,6 +25,21 @@ preprocessing:
         enabled: false
         size: 1000
         stride: 500
+    # spectrogram:
+    #     enabled: false
+    #     nperseg: 128
+    #     noverlap: 96
+    #     nfft: 128
+    #     log_power: true
+    augmentation:
+        enabled: true
+        ratio: 0.3
+        max_imfs: 6
+        max_siftings: 10
+        stopping_tolerance: 0.05
+        imf_jitter_std: 0.10
+        keep_residue: true
+        extrema_distance: 3
 
 representation:
     name: raw
