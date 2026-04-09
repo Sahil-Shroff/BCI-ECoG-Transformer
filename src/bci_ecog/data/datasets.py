@@ -55,10 +55,13 @@ def build_dataloader(
     shuffle: bool,
 ) -> DataLoader:
     dataset = _dataset_for_mode(mode, features, labels)
-    return DataLoader(
-        dataset,
-        batch_size=batch_size,
-        shuffle=shuffle,
-        num_workers=num_workers,
-        pin_memory=torch.cuda.is_available(),
-    )
+    loader_kwargs = {
+        "batch_size": batch_size,
+        "shuffle": shuffle,
+        "num_workers": num_workers,
+        "pin_memory": torch.cuda.is_available(),
+    }
+    if num_workers > 0:
+        loader_kwargs["persistent_workers"] = True
+
+    return DataLoader(dataset, **loader_kwargs)

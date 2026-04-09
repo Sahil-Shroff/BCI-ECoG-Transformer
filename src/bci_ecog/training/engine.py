@@ -23,24 +23,30 @@ def create_loader(
         torch.from_numpy(features).float(),
         torch.from_numpy(labels).long(),
     )
-    return DataLoader(
-        dataset,
-        batch_size=batch_size,
-        shuffle=shuffle,
-        num_workers=num_workers,
-        pin_memory=torch.cuda.is_available(),
-    )
+    loader_kwargs: dict[str, Any] = {
+        "batch_size": batch_size,
+        "shuffle": shuffle,
+        "num_workers": num_workers,
+        "pin_memory": torch.cuda.is_available(),
+    }
+    if num_workers > 0:
+        loader_kwargs["persistent_workers"] = True
+
+    return DataLoader(dataset, **loader_kwargs)
 
 
 def create_inference_loader(features: np.ndarray, batch_size: int, num_workers: int) -> DataLoader:
     dataset = TensorDataset(torch.from_numpy(features).float())
-    return DataLoader(
-        dataset,
-        batch_size=batch_size,
-        shuffle=False,
-        num_workers=num_workers,
-        pin_memory=torch.cuda.is_available(),
-    )
+    loader_kwargs: dict[str, Any] = {
+        "batch_size": batch_size,
+        "shuffle": False,
+        "num_workers": num_workers,
+        "pin_memory": torch.cuda.is_available(),
+    }
+    if num_workers > 0:
+        loader_kwargs["persistent_workers"] = True
+
+    return DataLoader(dataset, **loader_kwargs)
 
 
 def _epoch_pass(
@@ -53,9 +59,9 @@ def _epoch_pass(
     training = optimizer is not None
     model.train(training)
 
-    losses: list[float] = []
-    predictions: list[np.ndarray] = []
-    targets: list[np.ndarray] = []
+    losses: list[torch.Tensor] = []
+    predictions: list[torch.Tensor] = []
+    targets: list[torch.Tensor] = []
 
     for batch_features, batch_targets in loader:
         batch_features = batch_features.to(device, non_blocking=True)
@@ -69,15 +75,15 @@ def _epoch_pass(
                 loss.backward()
                 optimizer.step()
 
-        losses.append(float(loss.detach().cpu().item()))
-        predictions.append(torch.argmax(logits, dim=1).detach().cpu().numpy())
-        targets.append(batch_targets.detach().cpu().numpy())
+        losses.append(loss.detach())
+        predictions.append(torch.argmax(logits, dim=1).detach())
+        targets.append(batch_targets.detach())
 
-    y_true = np.concatenate(targets)
-    y_pred = np.concatenate(predictions)
+    y_true = torch.cat(targets).cpu().numpy()
+    y_pred = torch.cat(predictions).cpu().numpy()
     num_classes = model.classifier[-1].out_features
     metrics = compute_metrics(y_true, y_pred, num_classes=num_classes)
-    metrics["loss"] = float(np.mean(losses))
+    metrics["loss"] = float(torch.stack(losses).mean().cpu().item())
     return metrics
 
 
