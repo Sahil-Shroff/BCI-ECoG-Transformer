@@ -1,0 +1,55 @@
+experiment:
+  name: Raw_CNN_1D_Baseline_EMD_Augmentation
+  output_root: outputs
+seed: 42
+device: cuda
+data:
+  dataset_dir: data/raw/bci_competition_iii_dataset_i
+  train_file: Competition_train.mat.gz
+  competition_test_file: Competition_test.mat.gz
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+  sample_rate_hz: 1000
+  class_names:
+  - label_-1
+  - label_1
+preprocessing:
+  normalization:
+    enabled: true
+  windowing:
+    enabled: false
+    size: 1000
+    stride: 500
+  augmentation:
+    enabled: true
+    ratio: 2.0
+    max_imfs: 10
+    max_siftings: 15
+    stopping_tolerance: 0.05
+    imf_jitter_std: 0.0
+    keep_residue: true
+    extrema_distance: 3
+    workers: 4
+representation:
+  name: raw
+  normalize_raw: true
+model:
+  name: raw_cnn_1d
+  channels:
+  - 64
+  - 128
+  - 256
+  kernel_size: 7
+  dropout: 0.3
+  classifier_hidden_dim: 128
+training:
+  batch_size: 16
+  num_workers: 4
+  epochs: 40
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  early_stopping_patience: 10
+  monitor: balanced_accuracy
+  monitor_mode: max

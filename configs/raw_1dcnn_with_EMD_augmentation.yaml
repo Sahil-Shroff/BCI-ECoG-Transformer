@@ -34,7 +34,7 @@ preprocessing:
         imf_jitter_std: 0.0
         keep_residue: true
         extrema_distance: 3
-        workers: 4
+        workers: 8
 
 representation:
     name: raw
