@@ -37,7 +37,7 @@ preprocessing:
         max_imfs: 6
         max_siftings: 10
         stopping_tolerance: 0.05
-        # deviation_percent: 20.0
+        imf_jitter_std: 0.10
         keep_residue: true
         extrema_distance: 3
 

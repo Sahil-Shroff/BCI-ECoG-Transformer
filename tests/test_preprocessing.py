@@ -33,7 +33,7 @@ def test_emd_augmentation_increases_size_deterministically():
         "max_imfs": 4,
         "max_siftings": 6,
         "stopping_tolerance": 0.05,
-        "deviation_percent": 10.0,
+        "imf_jitter_std": 0.10,
         "keep_residue": True,
     }
 
@@ -57,6 +57,33 @@ def test_emd_augmentation_increases_size_deterministically():
     assert np.array_equal(augmented_labels_1[: labels.shape[0]], labels)
 
     assert np.array_equal(augmented_signals_1, augmented_signals_2)
+
+
+def test_emd_augmentation_accepts_high_imf_jitter_std():
+    rng = np.random.default_rng(321)
+    signals = rng.normal(size=(6, 4, 96)).astype(np.float32)
+    labels = np.array([0, 0, 1, 1, 0, 1], dtype=np.int64)
+    config = {
+        "enabled": True,
+        "ratio": 0.5,
+        "max_imfs": 4,
+        "max_siftings": 6,
+        "stopping_tolerance": 0.05,
+        "imf_jitter_std": 0.60,
+        "keep_residue": True,
+        "extrema_distance": 3,
+    }
+
+    augmented_signals, augmented_labels = apply_emd_augmentation(
+        signals=signals,
+        labels=labels,
+        augmentation_config=config,
+        seed=7,
+    )
+
+    assert augmented_signals.shape[0] > signals.shape[0]
+    assert augmented_labels.shape[0] > labels.shape[0]
+    assert np.all(np.isfinite(augmented_signals))
 
 
 def test_extrema_distance_filters_noise():
@@ -149,7 +176,7 @@ def test_augmentation_preserves_class_balance():
         "max_imfs": 3,
         "max_siftings": 5,
         "stopping_tolerance": 0.05,
-        "deviation_percent": 15.0,
+        "imf_jitter_std": 0.15,
         "keep_residue": True,
         "extrema_distance": 3,
     }

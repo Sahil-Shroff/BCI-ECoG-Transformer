@@ -94,9 +94,7 @@ def _interpolate_envelope(points: np.ndarray, values: np.ndarray, num_samples: i
         try:
             spline = CubicSpline(x, y, bc_type="natural", extrapolate=True)
             envelope = spline(xi)
-            # Guard against unstable spline explosions.
-            value_scale = float(np.max(np.abs(values)) + 1e-12)
-            if np.all(np.isfinite(envelope)) and np.max(np.abs(envelope)) <= 20.0 * value_scale:
+            if np.all(np.isfinite(envelope)):
                 return envelope
         except ValueError:
             pass
@@ -294,13 +292,7 @@ def apply_emd_augmentation(
     max_imfs = int(augmentation_config.get("max_imfs", 6))
     max_siftings = int(augmentation_config.get("max_siftings", 10))
     stopping_tolerance = float(augmentation_config.get("stopping_tolerance", 0.05))
-    if "deviation_percent" in augmentation_config:
-        deviation_percent = float(augmentation_config.get("deviation_percent", 10.0))
-        if deviation_percent < 0 or deviation_percent > 100:
-            raise ValueError("EMD augmentation deviation_percent must be within [0, 100].")
-        imf_jitter_std = deviation_percent / 100.0
-    else:
-        imf_jitter_std = float(augmentation_config.get("imf_jitter_std", 0.10))
+    imf_jitter_std = float(augmentation_config.get("imf_jitter_std", 0.10))
     keep_residue = bool(augmentation_config.get("keep_residue", True))
     extrema_distance = int(augmentation_config.get("extrema_distance", 3))
     if max_imfs <= 0 or max_siftings <= 0:
