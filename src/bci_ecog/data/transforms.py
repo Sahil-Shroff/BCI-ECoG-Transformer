@@ -51,9 +51,10 @@ class FeaturewiseZScore(Transform):
         self.std: np.ndarray | None = None
 
     def fit(self, inputs: np.ndarray) -> "FeaturewiseZScore":
-        axes = tuple(index for index in range(inputs.ndim) if index not in (0, 1))
-        self.mean = inputs.mean(axis=axes, keepdims=True)
-        self.std = inputs.std(axis=axes, keepdims=True)
+        # For spectrogram inputs shaped [trials, channels, freq, time], compute
+        # statistics across the training batch so they broadcast to any split size.
+        self.mean = inputs.mean(axis=0, keepdims=True)
+        self.std = inputs.std(axis=0, keepdims=True)
         self.std = np.where(self.std < 1e-6, 1.0, self.std)
         return self
 
