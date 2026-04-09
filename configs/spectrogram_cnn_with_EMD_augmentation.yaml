@@ -1,5 +1,5 @@
 experiment:
-    name: Spectrogram_CNN_Baseline
+    name: Spectrogram_CNN_Baseline_EMD_Augmentation
     output_root: outputs
 
 seed: 42
@@ -32,14 +32,15 @@ preprocessing:
         nfft: 128
         log_power: true
     augmentation:
-        enabled: false
-        ratio: 1.0
-        max_imfs: 6
-        max_siftings: 10
+        enabled: true
+        ratio: 2.0
+        max_imfs: 10
+        max_siftings: 15
         stopping_tolerance: 0.05
-        imf_jitter_std: 0.10
+        imf_jitter_std: 0.0
         keep_residue: true
         extrema_distance: 3
+        workers: 8
 
 representation:
     name: spectrogram
