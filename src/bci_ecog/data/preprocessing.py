@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
+from functools import partial
 from typing import Any
 
 import numpy as np
@@ -167,6 +169,26 @@ def _extract_imfs_1d(
     imfs.append(residue.astype(np.float32))
     return imfs
 
+
+def _extract_trial_imfs(
+    trial_signals: np.ndarray,
+    max_imfs: int,
+    max_siftings: int,
+    stopping_tolerance: float,
+    extrema_distance: int,
+) -> list[list[np.ndarray]]:
+    trial_imfs: list[list[np.ndarray]] = []
+    for ch_idx in range(trial_signals.shape[0]):
+        ch_imfs = _extract_imfs_1d(
+            signal=trial_signals[ch_idx],
+            max_imfs=max_imfs,
+            max_siftings=max_siftings,
+            stopping_tolerance=stopping_tolerance,
+            extrema_distance=extrema_distance,
+        )
+        trial_imfs.append(ch_imfs)
+    return trial_imfs
+
 def _mix_imfs_across_trials(
     all_imfs_by_trial: list[list[list[np.ndarray]]],
     class_indices: np.ndarray,
@@ -295,6 +317,7 @@ def apply_emd_augmentation(
     imf_jitter_std = float(augmentation_config.get("imf_jitter_std", 0.10))
     keep_residue = bool(augmentation_config.get("keep_residue", True))
     extrema_distance = int(augmentation_config.get("extrema_distance", 3))
+    workers = int(augmentation_config.get("workers", 1))
     if max_imfs <= 0 or max_siftings <= 0:
         raise ValueError("EMD augmentation max_imfs and max_siftings must be positive.")
     if imf_jitter_std < 0:
@@ -303,22 +326,24 @@ def apply_emd_augmentation(
         raise ValueError("EMD augmentation stopping_tolerance must be positive.")
     if extrema_distance <= 0:
         raise ValueError("EMD augmentation extrema_distance must be positive.")
+    if workers <= 0:
+        raise ValueError("EMD augmentation workers must be positive.")
 
     # Extract IMFs from all trials upfront for mixing.
     rng = np.random.default_rng(seed)
-    all_imfs = []
-    for trial_idx in range(num_trials):
-        trial_imfs = []  # IMFs for each channel
-        for ch_idx in range(signals.shape[1]):
-            ch_imfs = _extract_imfs_1d(
-                signal=signals[trial_idx, ch_idx],
-                max_imfs=max_imfs,
-                max_siftings=max_siftings,
-                stopping_tolerance=stopping_tolerance,
-                extrema_distance=extrema_distance,
-            )
-            trial_imfs.append(ch_imfs)
-        all_imfs.append(trial_imfs)
+    extract_trial = partial(
+        _extract_trial_imfs,
+        max_imfs=max_imfs,
+        max_siftings=max_siftings,
+        stopping_tolerance=stopping_tolerance,
+        extrema_distance=extrema_distance,
+    )
+
+    if workers == 1:
+        all_imfs = [extract_trial(signals[trial_idx]) for trial_idx in range(num_trials)]
+    else:
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            all_imfs = list(executor.map(extract_trial, (signals[trial_idx] for trial_idx in range(num_trials))))
 
     # Generate synthetic trials by mixing IMFs within each class.
     unique_labels = np.unique(labels)
