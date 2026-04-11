@@ -1,0 +1,43 @@
+{
+  "run_dir": "outputs/Spectrogram_CNN_Transformer_EMD_Augmentation/20260411_045454",
+  "device": "cuda",
+  "dataset": {
+    "train_path": "data/raw/bci_competition_iii_dataset_i/Competition_train.mat.gz",
+    "competition_test_path": "data/raw/bci_competition_iii_dataset_i/Competition_test.mat.gz"
+  },
+  "input_shape": [
+    64,
+    65,
+    90
+  ],
+  "representation": "spectrogram",
+  "best_epoch_metrics": {
+    "epoch": 9,
+    "train": {
+      "accuracy": 0.5859106529209622,
+      "balanced_accuracy": 0.5859106529209621,
+      "macro_f1": 0.5834202061782185,
+      "loss": 0.7181224226951599
+    },
+    "val": {
+      "accuracy": 0.6666666666666666,
+      "balanced_accuracy": 0.6666666666666666,
+      "macro_f1": 0.6666666666666666,
+      "loss": 0.6687934398651123
+    }
+  },
+  "final_metrics": {
+    "val": {
+      "accuracy": 0.6666666666666666,
+      "balanced_accuracy": 0.6666666666666666,
+      "macro_f1": 0.6666666666666666,
+      "loss": 0.6687934398651123
+    },
+    "test": {
+      "accuracy": 0.7142857142857143,
+      "balanced_accuracy": 0.7142857142857142,
+      "macro_f1": 0.7136363636363636,
+      "loss": 0.6335759162902832
+    }
+  }
+}
