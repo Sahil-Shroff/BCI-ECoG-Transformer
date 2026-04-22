@@ -1,0 +1,42 @@
+{
+  "run_dir": "outputs/Raw_CNN_1D_Baseline/20260422_002348",
+  "device": "cuda",
+  "dataset": {
+    "train_path": "data/raw/bci_competition_iii_dataset_i/Competition_train.mat.gz",
+    "competition_test_path": "data/raw/bci_competition_iii_dataset_i/Competition_test.mat.gz"
+  },
+  "input_shape": [
+    64,
+    3000
+  ],
+  "representation": "raw",
+  "best_epoch_metrics": {
+    "epoch": 11,
+    "train": {
+      "accuracy": 0.9175257731958762,
+      "balanced_accuracy": 0.9175257731958764,
+      "macro_f1": 0.9173852869157884,
+      "loss": 0.2361689805984497
+    },
+    "val": {
+      "accuracy": 0.9523809523809523,
+      "balanced_accuracy": 0.9523809523809523,
+      "macro_f1": 0.9523809523809523,
+      "loss": 0.2170533835887909
+    }
+  },
+  "final_metrics": {
+    "val": {
+      "accuracy": 0.9523809523809523,
+      "balanced_accuracy": 0.9523809523809523,
+      "macro_f1": 0.9523809523809523,
+      "loss": 0.2170533835887909
+    },
+    "test": {
+      "accuracy": 0.9047619047619048,
+      "balanced_accuracy": 0.9047619047619047,
+      "macro_f1": 0.9045454545454545,
+      "loss": 0.27597862482070923
+    }
+  }
+}
