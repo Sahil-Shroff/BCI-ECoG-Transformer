@@ -1,0 +1,43 @@
+{
+  "run_dir": "outputs/Spectrogram_CNN_Baseline/20260423_024649",
+  "device": "cuda",
+  "dataset": {
+    "train_path": "data/raw/bci_competition_iii_dataset_i/Competition_train.mat.gz",
+    "competition_test_path": "data/raw/bci_competition_iii_dataset_i/Competition_test.mat.gz"
+  },
+  "input_shape": [
+    64,
+    65,
+    90
+  ],
+  "representation": "spectrogram",
+  "best_epoch_metrics": {
+    "epoch": 6,
+    "train": {
+      "accuracy": 0.7371134020618557,
+      "balanced_accuracy": 0.7371134020618557,
+      "macro_f1": 0.7369386615617771,
+      "loss": 0.5507105588912964
+    },
+    "val": {
+      "accuracy": 0.8571428571428571,
+      "balanced_accuracy": 0.8571428571428572,
+      "macro_f1": 0.8568181818181818,
+      "loss": 0.3582138419151306
+    }
+  },
+  "final_metrics": {
+    "val": {
+      "accuracy": 0.8571428571428571,
+      "balanced_accuracy": 0.8571428571428572,
+      "macro_f1": 0.8568181818181818,
+      "loss": 0.3582138419151306
+    },
+    "test": {
+      "accuracy": 0.8809523809523809,
+      "balanced_accuracy": 0.8809523809523809,
+      "macro_f1": 0.8808848553601816,
+      "loss": 0.3644159734249115
+    }
+  }
+}
