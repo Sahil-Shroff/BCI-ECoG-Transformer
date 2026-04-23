@@ -1,0 +1,42 @@
+{
+  "run_dir": "outputs/Raw_CNN_Transformer/20260422_184544",
+  "device": "cpu",
+  "dataset": {
+    "train_path": "data/raw/bci_competition_iii_dataset_i/Competition_train.mat.gz",
+    "competition_test_path": "data/raw/bci_competition_iii_dataset_i/Competition_test.mat.gz"
+  },
+  "input_shape": [
+    64,
+    3000
+  ],
+  "representation": "raw",
+  "best_epoch_metrics": {
+    "epoch": 5,
+    "train": {
+      "accuracy": 0.7938144329896907,
+      "balanced_accuracy": 0.7938144329896907,
+      "macro_f1": 0.7936170212765958,
+      "loss": 0.45361682772636414
+    },
+    "val": {
+      "accuracy": 0.8333333333333334,
+      "balanced_accuracy": 0.8333333333333333,
+      "macro_f1": 0.8324786324786324,
+      "loss": 0.46624764800071716
+    }
+  },
+  "final_metrics": {
+    "val": {
+      "accuracy": 0.8333333333333334,
+      "balanced_accuracy": 0.8333333333333333,
+      "macro_f1": 0.8324786324786324,
+      "loss": 0.46624764800071716
+    },
+    "test": {
+      "accuracy": 0.7857142857142857,
+      "balanced_accuracy": 0.7857142857142857,
+      "macro_f1": 0.7855927396483267,
+      "loss": 0.5876150727272034
+    }
+  }
+}
