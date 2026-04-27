@@ -1,0 +1,23 @@
+{
+  "train": {
+    "num_trials": 194,
+    "label_counts": {
+      "-1": 97,
+      "1": 97
+    }
+  },
+  "val": {
+    "num_trials": 42,
+    "label_counts": {
+      "-1": 21,
+      "1": 21
+    }
+  },
+  "test": {
+    "num_trials": 42,
+    "label_counts": {
+      "-1": 21,
+      "1": 21
+    }
+  }
+}
